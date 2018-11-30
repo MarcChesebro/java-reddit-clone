@@ -21,12 +21,8 @@ public class RedditFrontPage extends JFrame implements ActionListener{
 	
 	private JButton next, prev;
     private JTextField pId, textSize, dataSize;
-    private JPanel frontPage;
+    //private JPanel frontPage;
     private ArrayList<Page> pages; //WILL BE PAGES
-    
-	
-	//keeps track of all the pagetables in memory
-	private int pagesDisplayed;
 	
     /** menu items */
     JMenuBar menus;
@@ -37,6 +33,7 @@ public class RedditFrontPage extends JFrame implements ActionListener{
     GridBagConstraints loc;
 	public RedditFrontPage() {
 		pages = getPageListFromServer();
+		showFrontPage();
 		//for (int i=0; i<10; i++) {
 		//	pages.add(i);
 		//}
@@ -45,13 +42,8 @@ public class RedditFrontPage extends JFrame implements ActionListener{
 	    
 	    //commands = new ArrayList<Command>();
 	    //commandInd = 0;
-	    pagesDisplayed = 0;
 		//loc.anchor = GridBagConstraints.WEST;
 		//loc.insets = new Insets(8,8,8,8);
-		
-		GridLayout fPageLayout = new GridLayout(pages.size(), 1);
-	    frontPage = new JPanel();	
-	    frontPage.setLayout(fPageLayout);
 		
 		//this.prev = new JButton("Prev");
 	    //buttonPanel.add(this.prev, loc);
@@ -60,47 +52,9 @@ public class RedditFrontPage extends JFrame implements ActionListener{
 	    //buttonPanel.add(this.next, loc);
 	    
 
-	    for(int i = 0; i<pages.size(); i++){
-	    	JPanel preview = new JPanel();
-	    	int totalItems = 1;
-	    	String imgPath = "";
-	    	boolean isFirstPost = pages.get(i).getFirstPost() != null;
-	    	if (isFirstPost) {
-	    		totalItems++;
-	    		imgPath = pages.get(i).getFirstPost().getImagePath();
-	    		if (imgPath != "") totalItems++;
-	    	}
-		    GridLayout previewLayout = new GridLayout(totalItems, 1);
-	    	preview.setLayout(previewLayout);
-	    	//Go to Page button brings to page
-	    	final JButton goToPage = new JButton(pages.get(i).getTitle());
-	    	final int pageNum = i;
-	    	preview.add(goToPage);//Add latest post's label and image
-	    	goToPage.addActionListener(new ActionListener() 
-	        {
-	            @Override
-	            public void actionPerformed(ActionEvent event) 
-	            {
-	            	showPage(pages.get(pageNum));
-	            }
-	        });
-	    	if (isFirstPost) {
-	    		preview.add(new JLabel(pages.get(i).getFirstPost().getPostText()));
-	    		//creates the image panel based on the path to the image(possibly keep all images in a folder
-
-	    		if (imgPath != "") {
-	    			preview.add(new ImagePanel(imgPath));
-	    		}
-	    	}
-	    	
-	    	frontPage.add(preview);	    	
-	    	//frontPage.add(new JTextField(pages.get(i).toString()));
-	    }
+	    
 	    //loc.gridx = 0;
 	    //loc.gridy = 0;
-	    JScrollPane pane=new JScrollPane();
-	    pane.setViewportView(frontPage);
-	    this.add(pane);
 	    
 	    //GridLayout experimentLayout = new GridLayout(2,3);
 	    //JPanel textPanel = new JPanel();	
@@ -174,12 +128,69 @@ public class RedditFrontPage extends JFrame implements ActionListener{
 	    this.quitItem.addActionListener(this);
 	    this.homePage.addActionListener(this);
 	}
+	public void showFrontPage(){
+		Container container = this.getContentPane();
+		container.removeAll();
+		GridLayout fPageLayout = new GridLayout(pages.size(), 1);
+	    JPanel frontPage = new JPanel();	
+	    frontPage.setLayout(fPageLayout);
+	    
+	    for(int i = 0; i<pages.size(); i++){
+	    	JPanel preview = new JPanel();
+	    	int totalItems = 1;
+	    	String imgPath = "";
+	    	boolean isFirstPost = pages.get(i).getFirstPost() != null;
+	    	if (isFirstPost) {
+	    		totalItems++;
+	    		imgPath = pages.get(i).getFirstPost().getImagePath();
+	    		if (imgPath != "") totalItems++;
+	    	}
+		    GridLayout previewLayout = new GridLayout(totalItems, 1);
+	    	preview.setLayout(previewLayout);
+	    	//Go to Page button brings to page
+	    	final JButton goToPage = new JButton(pages.get(i).getTitle());
+	    	final int pageNum = i;
+	    	preview.add(goToPage);//Add latest post's label and image
+	    	goToPage.addActionListener(new ActionListener() 
+	        {
+	            @Override
+	            public void actionPerformed(ActionEvent event) 
+	            {
+	            	showPage(pages.get(pageNum));
+	            }
+	        });
+	    	if (isFirstPost) {
+	    		preview.add(new JLabel(pages.get(i).getFirstPost().getPostText()));
+	    		//creates the image panel based on the path to the image(possibly keep all images in a folder
+
+	    		if (imgPath != "") {
+	    			preview.add(new ImagePanel(imgPath));
+	    		}
+	    	}
+	    	
+	    	frontPage.add(preview);	    	
+	    	//frontPage.add(new JTextField(pages.get(i).toString()));
+	    }	
+	    JScrollPane pane = new JScrollPane();
+	    pane.setViewportView(frontPage);
+        container.add(pane);
+        container.validate();
+        container.repaint();
+	}
 	public void showPage(Page page) {
 		Container container = this.getContentPane();
 		container.removeAll();
 		JPanel newPage = new JPanel();
-		final JButton goToPage = new JButton(page.getTitle());
-    	newPage.add(goToPage);
+		final JButton goToFrontPage = new JButton("Back to Front Page");
+    	goToFrontPage.addActionListener(new ActionListener() 
+        {
+            @Override
+            public void actionPerformed(ActionEvent event) 
+            {
+            	showFrontPage();
+            }
+        });
+    	newPage.add(goToFrontPage);
 	    JScrollPane pane = new JScrollPane();
 	    pane.setViewportView(newPage);
         container.add(pane);
