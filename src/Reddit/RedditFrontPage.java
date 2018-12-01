@@ -231,7 +231,7 @@ public class RedditFrontPage extends JFrame implements ActionListener{
     			postPanel.add(img, loc);
     		}
     		//FIXME add comments
-    		JTextField commentView = new JTextField();
+    		JTextArea commentView = new JTextArea();
     		for (int j = 0; j < post.getComments().size(); j++) {
     			Comment comment = post.getComments().get(j);
     			String commentStr = comment.getUser() +": " + comment.getText() + "\n";
