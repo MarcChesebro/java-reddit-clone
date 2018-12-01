@@ -16,6 +16,7 @@ public class ImagePanel extends JPanel{
     public ImagePanel(String pathName) {
        try {                
           image = ImageIO.read(new File(pathName));
+          setSize(image.getWidth(), image.getHeight());
        } catch (IOException ex) {
             // handle exception...
        }

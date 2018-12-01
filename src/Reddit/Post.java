@@ -19,6 +19,9 @@ public class Post {
     public String getPostText() {
     	return this.postText;
     }
+    public ArrayList<Comment> getComments() {
+    	return this.comments;
+    }
     public void addComment(String user, String text) {
     	Comment comment = new Comment(user, text);
     	comments.add(comment);

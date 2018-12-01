@@ -28,9 +28,8 @@ public class RedditFrontPage extends JFrame implements ActionListener{
     JMenuBar menus;
     JMenu fileMenu;
     JMenuItem quitItem;
-    JMenuItem homePage; 
+    JMenuItem refresh; 
     JMenuItem createPage;
-    GridBagConstraints loc;
 	public RedditFrontPage() {
 		pages = getPageListFromServer();
 		showFrontPage();
@@ -108,12 +107,11 @@ public class RedditFrontPage extends JFrame implements ActionListener{
 	    //loc.gridy = 2;
 	    //this.add(framePanel,loc);
 	    fileMenu = new JMenu("File");
-	    homePage = new JMenuItem("HomePage");
+	    refresh = new JMenuItem("Refresh");
 	    createPage = new JMenuItem("Create Page");
 	    quitItem = new JMenuItem("Quit");
 	    
-	    
-	    fileMenu.add(homePage);
+	    fileMenu.add(refresh);
 	    fileMenu.add(createPage);
 	    fileMenu.add(quitItem);
 
@@ -124,33 +122,36 @@ public class RedditFrontPage extends JFrame implements ActionListener{
 	
 	    //this.next.addActionListener(this);
 	    //this.prev.addActionListener(this);
+	    this.refresh.addActionListener(this);
 	    this.fileMenu.addActionListener(this);
 	    this.quitItem.addActionListener(this);
-	    this.homePage.addActionListener(this);
+	    this.createPage.addActionListener(this);
 	}
 	public void showFrontPage(){
 		Container container = this.getContentPane();
 		container.removeAll();
-		GridLayout fPageLayout = new GridLayout(pages.size(), 1);
+		
 	    JPanel frontPage = new JPanel();	
+		GridBagLayout fPageLayout = new GridBagLayout();
+		GridBagConstraints loc = new GridBagConstraints();
 	    frontPage.setLayout(fPageLayout);
 	    
+		loc.weightx = 1;
+		loc.fill = GridBagConstraints.HORIZONTAL;
 	    for(int i = 0; i<pages.size(); i++){
 	    	JPanel preview = new JPanel();
-	    	int totalItems = 1;
 	    	String imgPath = "";
 	    	boolean isFirstPost = pages.get(i).getFirstPost() != null;
 	    	if (isFirstPost) {
-	    		totalItems++;
 	    		imgPath = pages.get(i).getFirstPost().getImagePath();
-	    		if (imgPath != "") totalItems++;
 	    	}
-		    GridLayout previewLayout = new GridLayout(totalItems, 1);
+		    GridBagLayout previewLayout = new GridBagLayout();
 	    	preview.setLayout(previewLayout);
 	    	//Go to Page button brings to page
 	    	final JButton goToPage = new JButton(pages.get(i).getTitle());
 	    	final int pageNum = i;
-	    	preview.add(goToPage);//Add latest post's label and image
+	    	loc.gridy = 0;
+	    	preview.add(goToPage, loc);//Add latest post's label and image
 	    	goToPage.addActionListener(new ActionListener() 
 	        {
 	            @Override
@@ -160,17 +161,24 @@ public class RedditFrontPage extends JFrame implements ActionListener{
 	            }
 	        });
 	    	if (isFirstPost) {
-	    		preview.add(new JLabel(pages.get(i).getFirstPost().getPostText()));
+	    		loc.gridy = 1;
+	    		preview.add(new JLabel(pages.get(i).getFirstPost().getPostText()), loc);
 	    		//creates the image panel based on the path to the image(possibly keep all images in a folder
 
 	    		if (imgPath != "") {
-	    			preview.add(new ImagePanel(imgPath));
+	    			loc.gridy = 2;
+		    		ImagePanel img = new ImagePanel(imgPath);
+	    			loc.ipady = img.getHeight();
+	    			preview.add(img, loc);
+	    			loc.ipady = 0;
 	    		}
 	    	}
-	    	
-	    	frontPage.add(preview);	    	
+	    	loc.gridy = i;
+	    	frontPage.add(preview, loc);	    	
 	    	//frontPage.add(new JTextField(pages.get(i).toString()));
-	    }	
+	    }
+	   // frontPage.setBackground(Color.CYAN);
+	    //frontPage.setBorder(BorderFactory.createLineBorder(Color.black));
 	    JScrollPane pane = new JScrollPane();
 	    pane.setViewportView(frontPage);
         container.add(pane);
@@ -180,7 +188,15 @@ public class RedditFrontPage extends JFrame implements ActionListener{
 	public void showPage(Page page) {
 		Container container = this.getContentPane();
 		container.removeAll();
+		
 		JPanel newPage = new JPanel();
+		GridBagLayout pageLayout = new GridBagLayout();
+		GridBagConstraints loc = new GridBagConstraints();
+		newPage.setLayout(pageLayout);
+		loc.fill = GridBagConstraints.HORIZONTAL;
+		loc.weightx = 0;
+		loc.gridy = 0;
+		loc.gridx = 0;
 		final JButton goToFrontPage = new JButton("Back to Front Page");
     	goToFrontPage.addActionListener(new ActionListener() 
         {
@@ -190,22 +206,71 @@ public class RedditFrontPage extends JFrame implements ActionListener{
             	showFrontPage();
             }
         });
-    	newPage.add(goToFrontPage);
+
+    	newPage.add(goToFrontPage, loc);
+		loc.gridy = 1;
+		loc.weightx = 1;
+    	newPage.add(new JLabel(page.getTitle()), loc);
+    	for (int i = 0; i < page.getPosts().size(); i ++) {
+    		int count;
+    		Post post = page.getPosts().get(i);
+    		if (post.getImagePath() != "") {
+    			count = 3;
+    		} else {
+    			count = 2;
+    		}
+    		JPanel postPanel = new JPanel();
+    		GridBagLayout postLayout = new GridBagLayout();
+    		postPanel.setLayout(postLayout);
+    		loc.gridy = 0;
+    		postPanel.add(new JLabel(post.getPostText()), loc);
+    		if (count == 3) {
+	    		loc.gridy = 1;
+	    		ImagePanel img = new ImagePanel(post.getImagePath());
+	    		loc.ipady = img.getHeight();
+    			postPanel.add(img, loc);
+    		}
+    		//FIXME add comments
+    		JTextField commentView = new JTextField();
+    		for (int j = 0; j < post.getComments().size(); j++) {
+    			Comment comment = post.getComments().get(j);
+    			String commentStr = comment.getUser() +": " + comment.getText() + "\n";
+    			commentView.setText(commentView.getText() + commentStr);
+    		}
+    		JScrollPane commentScroll = new JScrollPane();
+    		commentScroll.setViewportView(commentView);
+    		loc.gridy = 2;
+    		loc.ipady = 200;
+    		postPanel.add(commentScroll, loc);
+    		loc.ipady = 0;
+    		loc.gridy = i + 2;
+    		newPage.add(postPanel, loc);
+    	}
 	    JScrollPane pane = new JScrollPane();
 	    pane.setViewportView(newPage);
         container.add(pane);
         container.validate();
         container.repaint();
-        //System.out.println("in4");
         setVisible(true);
 	}
 	public ArrayList<Page> getPageListFromServer() {
+		//FIXME pull from the server.
 		ArrayList <Page> retList = new ArrayList<Page>();
 		//retList will be the page list return from the server.
-		for (int i = 0; i < 30; i++) {
+		for (int i = 0; i < 5; i++) {
 			Page p = new Page("NewPage" + i);
-			p.addPost("hello world!", "");
-			p.addPost("newest POST!!!", "");
+			p.addPost("hello world 1112341234!", "");
+			p.addPost("hello world 1234!", "");
+			p.addPost("hello world 5!", "./test.png");
+			p.addPost("hello world 5!", "");
+			p.addPost("hello world 5!", "");
+			p.addPost("hello world 5!", "");
+			p.addPost("hello world 5!", "");
+			p.addPost("hello world 5!", "");
+			p.addPost("hello world 5!", "");
+			p.addPost("hello world 5!", "");
+			p.addPost("hello world 5!", "");
+			p.addPost("newest POST!!!", "./test.png");
 			retList.add(p);
 		}
 		return retList;
@@ -217,6 +282,25 @@ public class RedditFrontPage extends JFrame implements ActionListener{
      * @param e the event that was fired
      ****************************************************************/       
     public void actionPerformed(ActionEvent e){
-    
+        JComponent buttonPressed = (JComponent) e.getSource();
+        if (buttonPressed == this.createPage) {
+        	Object[] possibilities = null;
+        	String s = (String)JOptionPane.showInputDialog(
+    	                    this,
+    	                    "Please name your page!",
+    	                    "Customized Dialog",
+    	                    JOptionPane.PLAIN_MESSAGE,
+    	                    null,
+    	                    possibilities,
+    	                    "Default Page Name");
+        	if (s != null && s != "") {
+        		//FIXME UPDATE THE SERVER WITH THE NEW PAGE.
+        		pages.add(new Page(s));
+        		showFrontPage();
+        	}
+        } else if (buttonPressed == refresh) {
+        	this.pages = getPageListFromServer();
+        	showFrontPage();
+        }
     }
 }

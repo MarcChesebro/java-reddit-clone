@@ -10,5 +10,11 @@ public class Comment {
     	this.user = user;
     	this.text = text;
     }
+    public String getUser() {
+    	return user;
+    }
+    public String getText() {
+    	return text;
+    }
 }
 
