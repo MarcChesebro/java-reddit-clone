@@ -13,10 +13,15 @@ import java.io.IOException;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-
+import java.io.File;
 import java.awt.event.*;
 import java.util.*;
 import java.lang.*;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.awt.Color;
 
 public class RedditFrontPage extends JFrame implements ActionListener{
@@ -155,6 +160,32 @@ public class RedditFrontPage extends JFrame implements ActionListener{
     	newPage.add(pageTitleLabel, loc);
     	
     	JButton addPost = new JButton("Create New \n Post");
+    	addPost.addActionListener(new ActionListener() 
+        {
+            @Override
+            public void actionPerformed(ActionEvent event) 
+            {
+            	File directory = new File("./Images");
+                if (! directory.exists()){
+                    directory.mkdir();
+                }
+            	FileDialog fd = new FileDialog(new JFrame());
+            	fd.setVisible(true);
+            	File[] f = fd.getFiles();
+            	if (f.length == 0) return;
+            	Path imgPath = Paths.get(fd.getFiles()[0].getAbsolutePath());
+            	Path dest = Paths.get("./Images/"+fd.getFiles()[0].getName());
+                
+            	try {
+            		Files.copy(imgPath, dest, StandardCopyOption.REPLACE_EXISTING);
+            	} catch (IOException e) {
+            		System.out.println("Error in posting your Image.");
+            	}
+            	page.addPost("Empty", dest.toString());
+            	updateServer();
+            	showPage(page);
+            }
+        });
     	loc.fill = GridBagConstraints.NONE;
     	loc.gridy = 2;
     	loc.weightx = 0;
@@ -215,7 +246,7 @@ public class RedditFrontPage extends JFrame implements ActionListener{
 	            			handle + ": " + commentText + "\n");
 	            	addCommentField.setText("");
 	            	post.addComment(handle, commentText);
-	            	updateServer(pages);
+	            	updateServer();
 	            }
 	        });
 	    	loc.weightx = 1;
@@ -258,7 +289,7 @@ public class RedditFrontPage extends JFrame implements ActionListener{
 		}
 		return retList;
 	}
-	public void updateServer(ArrayList<Page> pages) {
+	public void updateServer() {
 		//FIXME Update servers, this is called when a comment, post, or new page is added.
 	}
     /*****************************************************************
@@ -280,7 +311,7 @@ public class RedditFrontPage extends JFrame implements ActionListener{
     	                    "Default Page Name");
         	if (s != null && s != "") {
         		pages.add(new Page(s));
-        		updateServer(pages);
+        		updateServer();
         		showFrontPage();
         	}
         } else if (buttonPressed == refresh) {
