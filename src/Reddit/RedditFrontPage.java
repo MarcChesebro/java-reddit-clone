@@ -44,97 +44,21 @@ public class RedditFrontPage extends JFrame implements ActionListener{
                 null,
                 "Default Page Name");
 		if (handle == null || handle == "") handle = "Anonymous";
+		
 		pages = getPageListFromServer();
 		showFrontPage();
-		//for (int i=0; i<10; i++) {
-		//	pages.add(i);
-		//}
-	    //setLayout(new GridBagLayout());
-	    //loc = new GridBagConstraints();
-	    
-	    //commands = new ArrayList<Command>();
-	    //commandInd = 0;
-		//loc.anchor = GridBagConstraints.WEST;
-		//loc.insets = new Insets(8,8,8,8);
 		
-		//this.prev = new JButton("Prev");
-	    //buttonPanel.add(this.prev, loc);
-	    
-	    //this.next = new JButton("Next");
-	    //buttonPanel.add(this.next, loc);
-	    
-
-	    
-	    //loc.gridx = 0;
-	    //loc.gridy = 0;
-	    
-	    //GridLayout experimentLayout = new GridLayout(2,3);
-	    //JPanel textPanel = new JPanel();	
-	    //textPanel.setLayout(experimentLayout);
-		
-	    //textPanel.add(new JLabel("Process ID"), loc);
-	    //textPanel.add(new JLabel("Text Size"), loc);
-	    //textPanel.add(new JLabel("Data Size"), loc);
-	    
-	    //pId = new JTextField(10);
-	    //textPanel.add(pId,loc);
-	    
-	    //textSize = new JTextField(10);
-	    //textPanel.add(textSize,loc);
-	    
-	    
-	    //dataSize = new JTextField(10);
-	    //textPanel.add(dataSize,loc);
-	    
-	    //loc.gridy = 1;
-	    //this.add(textPanel,loc);
-	    
-	    //GridLayout experimentLayout3 = new GridLayout(9,1);
-		//JPanel framePanel = new JPanel();	
-		//framePanel.setLayout(experimentLayout3);
-	    
-	
-	    //loc.gridx = 0;
-	    //loc.gridy = 0;
-	    //loc.insets.bottom = 20;
-	    //JLabel temp = new JLabel("Physical Memory");
-	    //temp.setHorizontalAlignment(JLabel.CENTER);
-	    //framePanel.add(temp, loc);
-	    
-	    //loc.insets.bottom = 0;
-	    //loc.insets.top = 0;
-	    //for(int i = 0; i<8;i++){
-		//    loc.gridx = 0;
-	    //	loc.gridy = i + 1;
-	    //	JButton btn = new JButton("Empty");
-	    //	btn.setPreferredSize(new Dimension(200, 40));
-		//	this.frameButtons.add(i,btn);
-	    //	framePanel.add(btn,loc);
-	    //}
-		
-	    //loc.anchor = GridBagConstraints.NORTHWEST;
-		//loc.weighty = 0;
-		//loc.weightx = 1;
-		//loc.gridheight = 2;
-	    //loc.gridx = 0;
-	    //loc.gridy = 2;
-	    //this.add(framePanel,loc);
 	    fileMenu = new JMenu("File");
 	    refresh = new JMenuItem("Refresh");
 	    createPage = new JMenuItem("Create Page");
 	    quitItem = new JMenuItem("Quit");
-	    
 	    fileMenu.add(refresh);
 	    fileMenu.add(createPage);
 	    fileMenu.add(quitItem);
-
-	    
 	    menus = new JMenuBar();
 	    setJMenuBar(menus);
 	    menus.add(fileMenu);
-	
-	    //this.next.addActionListener(this);
-	    //this.prev.addActionListener(this);
+	    
 	    this.refresh.addActionListener(this);
 	    this.fileMenu.addActionListener(this);
 	    this.quitItem.addActionListener(this);
@@ -207,6 +131,7 @@ public class RedditFrontPage extends JFrame implements ActionListener{
 		GridBagConstraints loc = new GridBagConstraints();
 		newPage.setLayout(pageLayout);
 		loc.fill = GridBagConstraints.HORIZONTAL;
+		loc.anchor = GridBagConstraints.NORTH;
 		loc.weightx = 0;
 		loc.gridy = 0;
 		loc.gridx = 0;
@@ -226,7 +151,18 @@ public class RedditFrontPage extends JFrame implements ActionListener{
 		JLabel pageTitleLabel = new JLabel("Welcome to " + page.getTitle());
 		pageTitleLabel.setHorizontalAlignment(JLabel.CENTER);
 		pageTitleLabel.setFont(new Font(pageTitleLabel.getName(), Font.PLAIN, 40));
+		pageTitleLabel.setForeground(Color.white);
     	newPage.add(pageTitleLabel, loc);
+    	
+    	JButton addPost = new JButton("Create New \n Post");
+    	loc.fill = GridBagConstraints.NONE;
+    	loc.gridy = 2;
+    	loc.weightx = 0;
+    	loc.anchor = GridBagConstraints.NORTHWEST;
+    	newPage.add(addPost, loc);
+    	loc.anchor = GridBagConstraints.CENTER;
+    	loc.fill = GridBagConstraints.HORIZONTAL;
+    	loc.weightx = 1;
     	for (int i = 0; i < page.getPosts().size(); i ++) {
     		int count;
     		Post post = page.getPosts().get(i);
@@ -248,7 +184,7 @@ public class RedditFrontPage extends JFrame implements ActionListener{
 	    		loc.ipady = img.getHeight();
     			postPanel.add(img, loc);
     		}
-    		JTextArea commentView = new JTextArea();
+    		final JTextArea commentView = new JTextArea();
     		for (int j = 0; j < post.getComments().size(); j++) {
     			Comment comment = post.getComments().get(j);
     			String commentStr = comment.getUser() +": " + comment.getText() + "\n";
@@ -256,12 +192,12 @@ public class RedditFrontPage extends JFrame implements ActionListener{
     		}
     		JScrollPane commentScroll = new JScrollPane();
     		commentScroll.setViewportView(commentView);
-    		loc.gridy = 2;
-    		loc.ipady = 200;
+    		loc.gridy = 3;
+    		loc.ipady = 150;
     		postPanel.add(commentScroll, loc);
     		
-    		JTextField addCommentField = new JTextField();
-    		loc.gridy = 3;
+    		final JTextField addCommentField = new JTextField();
+    		loc.gridy = 4;
     		loc.ipady = 0;
     		postPanel.add(addCommentField, loc);
     		
@@ -274,17 +210,23 @@ public class RedditFrontPage extends JFrame implements ActionListener{
 	            @Override
 	            public void actionPerformed(ActionEvent event) 
 	            {
-	            	
+	            	String commentText = addCommentField.getText();
+	            	commentView.setText(commentView.getText() +
+	            			handle + ": " + commentText + "\n");
+	            	addCommentField.setText("");
+	            	post.addComment(handle, commentText);
+	            	updateServer(pages);
 	            }
 	        });
 	    	loc.weightx = 1;
     		loc.gridx = 0;
-    		loc.gridy = i + 2;
-    		loc.insets = new Insets(20, 0, 0, 0);
+    		loc.gridy = i + 3;
+    		loc.insets = new Insets(40, 0, 0, 0);
     		newPage.add(postPanel, loc);
     		loc.insets = new Insets(0, 0, 0, 0);
     	}
 	    JScrollPane pane = new JScrollPane();
+		newPage.setBackground(Color.DARK_GRAY);
 	    pane.setViewportView(newPage);
         container.add(pane);
         container.validate();
@@ -293,6 +235,9 @@ public class RedditFrontPage extends JFrame implements ActionListener{
 	}
 	public ArrayList<Page> getPageListFromServer() {
 		//FIXME pull from the server.
+		
+		
+		//THIS IS TEST DATA
 		ArrayList <Page> retList = new ArrayList<Page>();
 		//retList will be the page list return from the server.
 		for (int i = 0; i < 5; i++) {
@@ -313,6 +258,9 @@ public class RedditFrontPage extends JFrame implements ActionListener{
 		}
 		return retList;
 	}
+	public void updateServer(ArrayList<Page> pages) {
+		//FIXME Update servers, this is called when a comment, post, or new page is added.
+	}
     /*****************************************************************
      * This method is called when any button is clicked.  The proper
      * internal method is called as needed.
@@ -331,8 +279,8 @@ public class RedditFrontPage extends JFrame implements ActionListener{
     	                    null,
     	                    "Default Page Name");
         	if (s != null && s != "") {
-        		//FIXME UPDATE THE SERVER WITH THE NEW PAGE.
         		pages.add(new Page(s));
+        		updateServer(pages);
         		showFrontPage();
         	}
         } else if (buttonPressed == refresh) {
