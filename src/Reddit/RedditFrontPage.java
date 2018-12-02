@@ -12,6 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+
 import java.awt.event.*;
 import java.util.*;
 import java.lang.*;
@@ -23,6 +25,7 @@ public class RedditFrontPage extends JFrame implements ActionListener{
     private JTextField pId, textSize, dataSize;
     //private JPanel frontPage;
     private ArrayList<Page> pages; //WILL BE PAGES
+    private String handle;
 	
     /** menu items */
     JMenuBar menus;
@@ -31,6 +34,16 @@ public class RedditFrontPage extends JFrame implements ActionListener{
     JMenuItem refresh; 
     JMenuItem createPage;
 	public RedditFrontPage() {
+		handle = (String)JOptionPane.showInputDialog(
+                this,
+                "Welcome to a GVSU Social Media platform, \n"
+                + "What would you like to be called in this session?",
+                "Customized Dialog",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                null,
+                "Default Page Name");
+		if (handle == null || handle == "") handle = "Anonymous";
 		pages = getPageListFromServer();
 		showFrontPage();
 		//for (int i=0; i<10; i++) {
@@ -210,7 +223,10 @@ public class RedditFrontPage extends JFrame implements ActionListener{
     	newPage.add(goToFrontPage, loc);
 		loc.gridy = 1;
 		loc.weightx = 1;
-    	newPage.add(new JLabel(page.getTitle()), loc);
+		JLabel pageTitleLabel = new JLabel("Welcome to " + page.getTitle());
+		pageTitleLabel.setHorizontalAlignment(JLabel.CENTER);
+		pageTitleLabel.setFont(new Font(pageTitleLabel.getName(), Font.PLAIN, 40));
+    	newPage.add(pageTitleLabel, loc);
     	for (int i = 0; i < page.getPosts().size(); i ++) {
     		int count;
     		Post post = page.getPosts().get(i);
@@ -223,14 +239,15 @@ public class RedditFrontPage extends JFrame implements ActionListener{
     		GridBagLayout postLayout = new GridBagLayout();
     		postPanel.setLayout(postLayout);
     		loc.gridy = 0;
-    		postPanel.add(new JLabel(post.getPostText()), loc);
+    		JLabel label = new JLabel(post.getPostText());
+    		//label.setFont(new Font(label.getName(), Font.PLAIN, 20));
+    		postPanel.add(label, loc);
     		if (count == 3) {
 	    		loc.gridy = 1;
 	    		ImagePanel img = new ImagePanel(post.getImagePath());
 	    		loc.ipady = img.getHeight();
     			postPanel.add(img, loc);
     		}
-    		//FIXME add comments
     		JTextArea commentView = new JTextArea();
     		for (int j = 0; j < post.getComments().size(); j++) {
     			Comment comment = post.getComments().get(j);
@@ -242,9 +259,30 @@ public class RedditFrontPage extends JFrame implements ActionListener{
     		loc.gridy = 2;
     		loc.ipady = 200;
     		postPanel.add(commentScroll, loc);
+    		
+    		JTextField addCommentField = new JTextField();
+    		loc.gridy = 3;
     		loc.ipady = 0;
+    		postPanel.add(addCommentField, loc);
+    		
+    		final JButton submitButton = new JButton("Comment");
+    		loc.gridx = 1;
+    		loc.weightx = 0;
+    		postPanel.add(submitButton, loc);
+	    	submitButton.addActionListener(new ActionListener() 
+	        {
+	            @Override
+	            public void actionPerformed(ActionEvent event) 
+	            {
+	            	
+	            }
+	        });
+	    	loc.weightx = 1;
+    		loc.gridx = 0;
     		loc.gridy = i + 2;
+    		loc.insets = new Insets(20, 0, 0, 0);
     		newPage.add(postPanel, loc);
+    		loc.insets = new Insets(0, 0, 0, 0);
     	}
 	    JScrollPane pane = new JScrollPane();
 	    pane.setViewportView(newPage);
@@ -284,14 +322,13 @@ public class RedditFrontPage extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent e){
         JComponent buttonPressed = (JComponent) e.getSource();
         if (buttonPressed == this.createPage) {
-        	Object[] possibilities = null;
         	String s = (String)JOptionPane.showInputDialog(
     	                    this,
     	                    "Please name your page!",
     	                    "Customized Dialog",
     	                    JOptionPane.PLAIN_MESSAGE,
     	                    null,
-    	                    possibilities,
+    	                    null,
     	                    "Default Page Name");
         	if (s != null && s != "") {
         		//FIXME UPDATE THE SERVER WITH THE NEW PAGE.
