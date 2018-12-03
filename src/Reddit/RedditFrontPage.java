@@ -34,7 +34,7 @@ public class RedditFrontPage extends JFrame implements ActionListener {
 
     private Socket serverSocket;
     private DataOutputStream outToServer;
-    private InputStream inFromServer;
+    private DataInputStream inFromServer;
 
     /**
      * menu items
@@ -51,7 +51,7 @@ public class RedditFrontPage extends JFrame implements ActionListener {
             serverSocket = new Socket("localhost", 12000);
 
             outToServer = new DataOutputStream(serverSocket.getOutputStream());
-            inFromServer = serverSocket.getInputStream();
+            inFromServer = new DataInputStream(serverSocket.getInputStream());
         }catch(Exception e){
             System.out.println("error creating socket");
         }
@@ -292,7 +292,7 @@ public class RedditFrontPage extends JFrame implements ActionListener {
         //FIXME pull from the server.
 
         // TODO this should pull the data from the server
-        ArrayList<Page> retList = loadPageList(inFromServer);
+        ArrayList<Page> retList = loadPageList();
 
         //THIS IS TEST DATA
 //        ArrayList<Page> retList = new ArrayList<Page>();
@@ -349,16 +349,34 @@ public class RedditFrontPage extends JFrame implements ActionListener {
     }
 
     public void updateServer() {
+
+        Socket dataSocket = null;
+        ObjectOutputStream objectOut = null;
+
         try {
             outToServer.writeBytes("update\n");
+            //load first to sync across server threads
+            int port = Integer.parseInt(inFromServer.readLine());
 
-            ObjectOutputStream objectOut = new ObjectOutputStream(outToServer);
+            dataSocket = new Socket(serverSocket.getInetAddress(), port);
+
+            objectOut = new ObjectOutputStream(dataSocket.getOutputStream());
             for (int i = 0; i < this.pages.size(); i++) {
                 objectOut.writeObject(this.pages.get(i));
             }
-            outToServer.flush();
+
         }catch (Exception e){
             System.out.println("error in update server");
+
+        }finally {
+            try {
+                if (dataSocket != null) {
+                    dataSocket.close();
+                }
+                if (objectOut != null) {
+                    objectOut.close();
+                }
+            }catch(Exception e){}
         }
     }
 
@@ -407,7 +425,7 @@ public class RedditFrontPage extends JFrame implements ActionListener {
         }
     }
 
-    public ArrayList<Page> loadPageList(InputStream serverInput) {
+    public ArrayList<Page> loadPageList() {
         ArrayList<Page> newPages = new ArrayList<Page>();
         ObjectInputStream save = null;
         Socket dataSocket = null;
@@ -417,7 +435,6 @@ public class RedditFrontPage extends JFrame implements ActionListener {
 
             ServerSocket welcomeData = new ServerSocket(dataPort);
             dataSocket = welcomeData.accept();
-            outToServer.writeBytes("retr\n");
 
             save = new ObjectInputStream(new BufferedInputStream(dataSocket.getInputStream()));
             for (; ; ) {

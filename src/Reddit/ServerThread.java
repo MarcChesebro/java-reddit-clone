@@ -65,7 +65,7 @@ public class ServerThread implements Runnable{
     }
 
     public void loadPageList() {
-        pages = new ArrayList<Page>();
+        ArrayList<Page> newPages = new ArrayList<Page>();
         int count = 0;
         FileInputStream saveFile;
         try {
@@ -73,7 +73,7 @@ public class ServerThread implements Runnable{
             try {
                 ObjectInputStream save = new ObjectInputStream(new BufferedInputStream(saveFile));
                 for (; ; ) {
-                    pages.add((Page) save.readObject());
+                    newPages.add((Page) save.readObject());
                     count++;
                 }
             } catch (Exception e) {
@@ -81,6 +81,7 @@ public class ServerThread implements Runnable{
             } finally {
                 saveFile.close();
             }
+            this.pages = newPages;
         } catch (EOFException e) {
             System.out.println("exception in write");
         } catch (Exception exc) {
@@ -111,16 +112,25 @@ public class ServerThread implements Runnable{
 
             if (command.startsWith("update")) {
                 //TODO get pages from client and save them into the data.ser file also update self.pages
+                outToClient.writeBytes("12004\n");
+
+                ServerSocket welcomeData = new ServerSocket(12004);
+                Socket dataSocket  = welcomeData.accept();
                 ArrayList<Page> newPages = new ArrayList<Page>();
+                ObjectInputStream save = null;
 
                 try {
 
-                    ObjectInputStream save = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
+                    save = new ObjectInputStream(new BufferedInputStream(dataSocket.getInputStream()));
                     for (; ; ) {
                         newPages.add((Page) save.readObject());
                     }
                 } catch (Exception e) {
                     //System.out.println("error in loadPageList");
+                    dataSocket.close();
+                    if(save != null) {
+                        save.close();
+                    }
                 }
 
                 this.pages = newPages;
