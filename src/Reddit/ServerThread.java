@@ -108,13 +108,27 @@ public class ServerThread implements Runnable{
             String command = inFromClient.readLine(); //TODO get from client
             if (command.startsWith("update")) {
                 //TODO get pages from client and save them into the data.ser file also update self.pages
+                ArrayList<Page> newPages = new ArrayList<Page>();
+
+                try {
+
+                    ObjectInputStream save = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
+                    for (; ; ) {
+                        newPages.add((Page) save.readObject());
+                    }
+                } catch (Exception e) {
+                    //System.out.println("error in loadPageList");
+                }
+
+                this.pages = newPages;
 
             } else if (command.startsWith("retr")) {
-                //TODO send pages to clientDataInputStream dataIn = new DataInputStream(fileIn);
+                //TODO send pages to client
                 ObjectOutputStream objectOut = new ObjectOutputStream(outToClient);
                 for(int i = 0; i < this.pages.size(); i++) {
                     objectOut.writeObject(this.pages.get(i));
                 }
+                objectOut.close();
 
             } else if (command.startsWith("images")){
                 //TODO send images to client

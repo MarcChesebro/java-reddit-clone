@@ -348,7 +348,18 @@ public class RedditFrontPage extends JFrame implements ActionListener {
     }
 
     public void updateServer() {
-        //FIXME Update servers, this is called when a comment, post, or new page is added.
+        //TODO this could take an argument of the page to update/add. This would be eesay to make it dynamic
+        try {
+            outToServer.writeBytes("update\n");
+
+            ObjectOutputStream objectOut = new ObjectOutputStream(outToServer);
+            for (int i = 0; i < this.pages.size(); i++) {
+                objectOut.writeObject(this.pages.get(i));
+            }
+            objectOut.close();
+        }catch (Exception e){
+            System.out.println("error in update server");
+        }
     }
 
     /*****************************************************************
