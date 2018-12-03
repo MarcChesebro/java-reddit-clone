@@ -348,7 +348,6 @@ public class RedditFrontPage extends JFrame implements ActionListener {
     }
 
     public void updateServer() {
-        //TODO this could take an argument of the page to update/add. This would be eesay to make it dynamic
         try {
             outToServer.writeBytes("update\n");
 

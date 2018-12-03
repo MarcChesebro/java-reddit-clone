@@ -122,8 +122,13 @@ public class ServerThread implements Runnable{
 
                 this.pages = newPages;
 
+                //save current page list to sync accross server threads.
+                saveCurrentPageList();
+
             } else if (command.startsWith("retr")) {
                 //TODO send pages to client
+                //load first to sync accross server threads
+                loadPageList();
                 ObjectOutputStream objectOut = new ObjectOutputStream(outToClient);
                 for(int i = 0; i < this.pages.size(); i++) {
                     objectOut.writeObject(this.pages.get(i));
