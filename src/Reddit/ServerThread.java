@@ -107,11 +107,14 @@ public class ServerThread implements Runnable{
 
             String command = inFromClient.readLine(); //TODO get from client
             if (command.startsWith("update")) {
-                //TODO get pages from client and save them into the data.ser file.
+                //TODO get pages from client and save them into the data.ser file also update self.pages
 
             } else if (command.startsWith("retr")) {
-                //TODO send pages to client
-
+                //TODO send pages to clientDataInputStream dataIn = new DataInputStream(fileIn);
+                ObjectOutputStream objectOut = new ObjectOutputStream(outToClient);
+                for(int i = 0; i < this.pages.size(); i++) {
+                    objectOut.writeObject(this.pages.get(i));
+                }
 
             } else if (command.startsWith("images")){
                 //TODO send images to client
