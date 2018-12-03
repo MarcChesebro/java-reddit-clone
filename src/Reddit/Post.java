@@ -2,9 +2,10 @@ package Reddit;
 
 import java.awt.Image;
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Post {
+public class Post implements Serializable {
     private String postText;
     private String imagePath;
     private ArrayList<Comment> comments;

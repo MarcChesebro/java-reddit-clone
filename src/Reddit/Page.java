@@ -1,9 +1,10 @@
 package Reddit;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Page {
+public class Page implements Serializable {
     private String title;
     private ArrayList<Post> posts;
 

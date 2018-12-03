@@ -1,8 +1,9 @@
 package Reddit;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Comment {
+public class Comment implements Serializable {
     private String user;
     private String text;
 
