@@ -1,31 +1,83 @@
 package Reddit;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class ServerThread implements Runnable{
 
     private static int threadCount;
     private int user;
     private Socket connection;
-    private PageList pageList;
+//    private PageList pageList;
+    private ArrayList<Page> pages;
 
     public ServerThread(Socket socket) throws Exception {
         this.connection = socket;
-        this.pageList = new PageList();
+        this.pages = new ArrayList<Page>();
     }
 
-    public void addPage(String Title){
-        this.pageList.addPage(Title);
+//    public void addPage(String Title){
+//        this.pageList.addPage(Title);
+//    }
+//
+//    public void addPost(String pageTitle, String postText, String image){
+//        //TODO this is assuming the image has been downloaded already.
+//        Page page = this.pageList.getPage(pageTitle);
+//        if (page != null){
+//            page.addPost(postText, image);
+//        }
+//    }
+
+    public void saveCurrentPageList() {
+        try {
+            FileOutputStream fileOut = new FileOutputStream("data.ser", true);
+            ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(fileOut));
+            for (int i = 0; i < pages.size(); i++) {
+                out.writeObject(pages.get(i));
+            }
+            out.close();
+            fileOut.close();
+        } catch (IOException i) {
+            System.out.println("error in writing users");
+        }
     }
 
-    public void addPost(String pageTitle, String postText, String image){
-        //TODO this is assuming the image has been downloaded already.
-        Page page = this.pageList.getPage(pageTitle);
-        if (page != null){
-            page.addPost(postText, image);
+    public void saveNewPageList(ArrayList<Page> newPages) {
+        try {
+            FileOutputStream fileOut = new FileOutputStream("data.ser", true);
+            ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(fileOut));
+            for (int i = 0; i < newPages.size(); i++) {
+                out.writeObject(newPages.get(i));
+            }
+            out.close();
+            fileOut.close();
+        } catch (IOException i) {
+            System.out.println("error in writing users");
+        }
+    }
+
+    public void loadPageList() {
+        pages = new ArrayList<Page>();
+        int count = 0;
+        FileInputStream saveFile;
+        try {
+            saveFile = new FileInputStream("data.ser");
+            try {
+                ObjectInputStream save = new ObjectInputStream(new BufferedInputStream(saveFile));
+                for (; ; ) {
+                    pages.add((Page) save.readObject());
+                    count++;
+                }
+            } catch (Exception e) {
+
+            } finally {
+                saveFile.close();
+            }
+        } catch (EOFException e) {
+            System.out.println("exception in write");
+        } catch (Exception exc) {
+            //System.out.println("exception in write");
         }
     }
 
@@ -40,8 +92,8 @@ public class ServerThread implements Runnable{
     private void processCommand() throws Exception {
         DataOutputStream outToClient = new DataOutputStream(connection.getOutputStream());
         BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        user = threadCount;
-        System.out.println("Client" + threadCount++ + " has connected!");
+        user = threadCount++;
+        System.out.println("Client" + user + " has connected!");
         // read input from user
         while (true) {
             //commands run
