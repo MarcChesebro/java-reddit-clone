@@ -297,54 +297,54 @@ public class RedditFrontPage extends JFrame implements ActionListener {
         //THIS IS TEST DATA
 //        ArrayList<Page> retList = new ArrayList<Page>();
         //retList will be the page list return from the server.
-        for (int i = 0; i < 5; i++) {
-            Page p = new Page("NewPage" + i);
-            p.addPost("hello world 1112341234!", "");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.getPosts().get(0).addComment("test", "test111");
-            p.addPost("hello world 1234!", "");
-            p.addPost("hello world 5!", "./test.png");
-            p.addPost("hello world 5!", "");
-            p.addPost("hello world 5!", "");
-            p.addPost("hello world 5!", "");
-            p.addPost("hello world 5!", "");
-            p.addPost("hello world 5!", "");
-            p.addPost("hello world 5!", "");
-            p.addPost("hello world 5!", "");
-            p.addPost("hello world 5!", "");
-            p.addPost("newest POST!!!", "./test.png");
-            retList.add(p);
-        }
+//        for (int i = 0; i < 5; i++) {
+//            Page p = new Page("NewPage" + i);
+//            p.addPost("hello world 1112341234!", "");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.getPosts().get(0).addComment("test", "test111");
+//            p.addPost("hello world 1234!", "");
+//            p.addPost("hello world 5!", "./test.png");
+//            p.addPost("hello world 5!", "");
+//            p.addPost("hello world 5!", "");
+//            p.addPost("hello world 5!", "");
+//            p.addPost("hello world 5!", "");
+//            p.addPost("hello world 5!", "");
+//            p.addPost("hello world 5!", "");
+//            p.addPost("hello world 5!", "");
+//            p.addPost("hello world 5!", "");
+//            p.addPost("newest POST!!!", "./test.png");
+//            retList.add(p);
+//        }
         return retList;
     }
 
@@ -356,7 +356,8 @@ public class RedditFrontPage extends JFrame implements ActionListener {
         try {
             outToServer.writeBytes("update\n");
             //load first to sync across server threads
-            int port = Integer.parseInt(inFromServer.readLine());
+            String portString = inFromServer.readLine();
+            int port = Integer.parseInt(portString);
 
             dataSocket = new Socket(serverSocket.getInetAddress(), port);
 
@@ -397,7 +398,7 @@ public class RedditFrontPage extends JFrame implements ActionListener {
                     null,
                     null,
                     "Default Page Name");
-            this.pages = getPageListFromServer();
+//            this.pages = getPageListFromServer();
             for (int i = 0; i < pages.size(); i++) {
                 System.out.println(pages.get(i).getTitle() + " " + s);
                 if (pages.get(i).getTitle().toLowerCase().equals(s.toLowerCase())) {
@@ -413,6 +414,7 @@ public class RedditFrontPage extends JFrame implements ActionListener {
         } else if (buttonPressed == refresh) {
             this.pages = getPageListFromServer();
             if (refreshObj == null) {
+                showFrontPage();
                 showFrontPage();
             } else {
                 Page pageToRefresh = (Page) refreshObj;
