@@ -31,6 +31,7 @@ public class RedditFrontPage extends JFrame implements ActionListener{
     //private JPanel frontPage;
     private ArrayList<Page> pages; //WILL BE PAGES
     private String handle;
+    private Object refreshObj;
 	
     /** menu items */
     JMenuBar menus;
@@ -47,7 +48,7 @@ public class RedditFrontPage extends JFrame implements ActionListener{
                 JOptionPane.PLAIN_MESSAGE,
                 null,
                 null,
-                "Default Page Name");
+                "Anonymous");
 		if (handle == null || handle == "") handle = "Anonymous";
 		
 		pages = getPageListFromServer();
@@ -70,6 +71,7 @@ public class RedditFrontPage extends JFrame implements ActionListener{
 	    this.createPage.addActionListener(this);
 	}
 	public void showFrontPage(){
+		refreshObj = null;
 		Container container = this.getContentPane();
 		container.removeAll();
 		
@@ -128,6 +130,7 @@ public class RedditFrontPage extends JFrame implements ActionListener{
         container.repaint();
 	}
 	public void showPage(Page page) {
+		refreshObj = page;
 		Container container = this.getContentPane();
 		container.removeAll();
 		
@@ -165,6 +168,15 @@ public class RedditFrontPage extends JFrame implements ActionListener{
             @Override
             public void actionPerformed(ActionEvent event) 
             {
+            	String s = (String)JOptionPane.showInputDialog(
+	                    addPost,
+	                    "Add Post Comment",
+	                    "Customized Dialog",
+	                    JOptionPane.PLAIN_MESSAGE,
+	                    null,
+	                    null,
+	                    "Empty");
+            	if (s == null || s == "") s = "Empty";
             	File directory = new File("./Images");
                 if (! directory.exists()){
                     directory.mkdir();
@@ -181,7 +193,7 @@ public class RedditFrontPage extends JFrame implements ActionListener{
             	} catch (IOException e) {
             		System.out.println("Error in posting your Image.");
             	}
-            	page.addPost("Empty", dest.toString());
+            	page.addPost(s, dest.toString());
             	updateServer();
             	showPage(page);
             }
@@ -224,7 +236,7 @@ public class RedditFrontPage extends JFrame implements ActionListener{
     		JScrollPane commentScroll = new JScrollPane();
     		commentScroll.setViewportView(commentView);
     		loc.gridy = 3;
-    		loc.ipady = 150;
+    		loc.ipady = 150 - (post.getComments().size() * 16);
     		postPanel.add(commentScroll, loc);
     		
     		final JTextField addCommentField = new JTextField();
@@ -274,6 +286,38 @@ public class RedditFrontPage extends JFrame implements ActionListener{
 		for (int i = 0; i < 5; i++) {
 			Page p = new Page("NewPage" + i);
 			p.addPost("hello world 1112341234!", "");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
+			p.getPosts().get(0).addComment("test", "test111");
 			p.addPost("hello world 1234!", "");
 			p.addPost("hello world 5!", "./test.png");
 			p.addPost("hello world 5!", "");
@@ -309,6 +353,14 @@ public class RedditFrontPage extends JFrame implements ActionListener{
     	                    null,
     	                    null,
     	                    "Default Page Name");
+        	this.pages = getPageListFromServer();
+        	for (int i = 0; i < pages.size(); i++) {
+        		System.out.println(pages.get(i).getTitle() + " " + s);
+        		if (pages.get(i).getTitle().toLowerCase().equals(s.toLowerCase())) {
+        			JOptionPane.showMessageDialog(this, "That Page Name already exists.");
+        			return;
+        		}
+        	}
         	if (s != null && s != "") {
         		pages.add(new Page(s));
         		updateServer();
@@ -316,7 +368,16 @@ public class RedditFrontPage extends JFrame implements ActionListener{
         	}
         } else if (buttonPressed == refresh) {
         	this.pages = getPageListFromServer();
-        	showFrontPage();
+        	if (refreshObj == null) {
+        		showFrontPage();
+        	} else {
+        		Page pageToRefresh = (Page)refreshObj;
+        		for (int i = 0; i < pages.size(); i++) {
+        			if (pages.get(i).getTitle().toLowerCase().equals(pageToRefresh.getTitle().toLowerCase())) {
+        				showPage(pages.get(i));
+        			}
+        		}
+        	}
         }
     }
 }
