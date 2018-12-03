@@ -12,6 +12,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import java.awt.event.*;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 import java.lang.*;
@@ -355,7 +356,7 @@ public class RedditFrontPage extends JFrame implements ActionListener {
             for (int i = 0; i < this.pages.size(); i++) {
                 objectOut.writeObject(this.pages.get(i));
             }
-            objectOut.close();
+            outToServer.flush();
         }catch (Exception e){
             System.out.println("error in update server");
         }
@@ -408,17 +409,29 @@ public class RedditFrontPage extends JFrame implements ActionListener {
 
     public ArrayList<Page> loadPageList(InputStream serverInput) {
         ArrayList<Page> newPages = new ArrayList<Page>();
-
+        ObjectInputStream save = null;
+        Socket dataSocket = null;
         try {
+            int dataPort = 12002;
+            outToServer.writeBytes("retr " + dataPort + "\n");
+
+            ServerSocket welcomeData = new ServerSocket(dataPort);
+            dataSocket = welcomeData.accept();
             outToServer.writeBytes("retr\n");
 
-            ObjectInputStream save = new ObjectInputStream(new BufferedInputStream(serverInput));
+            save = new ObjectInputStream(new BufferedInputStream(dataSocket.getInputStream()));
             for (; ; ) {
                 newPages.add((Page) save.readObject());
             }
         } catch (Exception e) {
-            //System.out.println("error in loadPageList");
+            //System.out.println("error in loadPageList")
+            try{
+                if (dataSocket != null){
+                    dataSocket.close();
+                }
+            }catch (Exception f){}
         }
+
 
         return newPages;
     }

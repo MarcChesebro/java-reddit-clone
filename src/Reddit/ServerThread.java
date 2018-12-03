@@ -105,7 +105,10 @@ public class ServerThread implements Runnable{
         // read input from user
         while (true) {
 
-            String command = inFromClient.readLine(); //TODO get from client
+            String command = inFromClient.readLine();
+            StringTokenizer tokens = new StringTokenizer(command);
+            tokens.nextToken(); // skip command
+
             if (command.startsWith("update")) {
                 //TODO get pages from client and save them into the data.ser file also update self.pages
                 ArrayList<Page> newPages = new ArrayList<Page>();
@@ -122,18 +125,23 @@ public class ServerThread implements Runnable{
 
                 this.pages = newPages;
 
-                //save current page list to sync accross server threads.
+                //save current page list to sync accross server thread.
                 saveCurrentPageList();
 
             } else if (command.startsWith("retr")) {
                 //TODO send pages to client
-                //load first to sync accross server threads
+
+                //load first to sync across server threads
+                int port = Integer.parseInt(tokens.nextToken());
                 loadPageList();
-                ObjectOutputStream objectOut = new ObjectOutputStream(outToClient);
+                Socket dataSocket = new Socket(connection.getInetAddress(), port);
+                ObjectOutputStream objectOut = new ObjectOutputStream(dataSocket.getOutputStream());
+
                 for(int i = 0; i < this.pages.size(); i++) {
                     objectOut.writeObject(this.pages.get(i));
                 }
                 objectOut.close();
+                dataSocket.close();
 
             } else if (command.startsWith("images")){
                 //TODO send images to client
