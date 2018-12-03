@@ -5,7 +5,7 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
-public class ServerThread {
+public class ServerThread implements Runnable{
 
     private static int threadCount;
     private int user;
