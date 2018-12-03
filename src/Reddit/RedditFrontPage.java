@@ -12,6 +12,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import java.awt.event.*;
+import java.net.Socket;
 import java.util.*;
 import java.lang.*;
 import java.nio.file.CopyOption;
@@ -30,6 +31,10 @@ public class RedditFrontPage extends JFrame implements ActionListener {
     private String handle;
     private Object refreshObj;
 
+    private Socket serverSocket;
+    private DataOutputStream outToServer;
+    private InputStream inFromServer;
+
     /**
      * menu items
      */
@@ -40,6 +45,17 @@ public class RedditFrontPage extends JFrame implements ActionListener {
     JMenuItem createPage;
 
     public RedditFrontPage() {
+
+        try {
+            serverSocket = new Socket("localhost", 12000);
+
+            outToServer = new DataOutputStream(serverSocket.getOutputStream());
+            inFromServer = serverSocket.getInputStream();
+        }catch(Exception e){
+            System.out.println("error creating socket");
+        }
+
+
         handle = (String) JOptionPane.showInputDialog(
                 this,
                 "Welcome to a GVSU Social Media platform, \n"
@@ -274,9 +290,11 @@ public class RedditFrontPage extends JFrame implements ActionListener {
     public ArrayList<Page> getPageListFromServer() {
         //FIXME pull from the server.
 
+        // TODO this should pull the data from the server
+        ArrayList<Page> retList = loadPageList(inFromServer);
 
         //THIS IS TEST DATA
-        ArrayList<Page> retList = new ArrayList<Page>();
+//        ArrayList<Page> retList = new ArrayList<Page>();
         //retList will be the page list return from the server.
         for (int i = 0; i < 5; i++) {
             Page p = new Page("NewPage" + i);
@@ -382,6 +400,8 @@ public class RedditFrontPage extends JFrame implements ActionListener {
         ArrayList<Page> newPages = new ArrayList<Page>();
 
         try {
+            outToServer.writeBytes("retr\n");
+
             ObjectInputStream save = new ObjectInputStream(new BufferedInputStream(serverInput));
             for (; ; ) {
                 newPages.add((Page) save.readObject());

@@ -17,6 +17,11 @@ public class ServerThread implements Runnable{
     public ServerThread(Socket socket) throws Exception {
         this.connection = socket;
         this.pages = new ArrayList<Page>();
+        Page p = new Page("NewPage");
+        p.addPost("hello world 1112341234!", "");
+        p.getPosts().get(0).addComment("test", "test111");
+        this.pages.add(p);
+        saveCurrentPageList();
     }
 
 //    public void addPage(String Title){
@@ -100,12 +105,16 @@ public class ServerThread implements Runnable{
         // read input from user
         while (true) {
 
-            String command = "something"; //TODO get from client
+            String command = inFromClient.readLine(); //TODO get from client
             if (command.startsWith("update")) {
                 //TODO get pages from client and save them into the data.ser file.
 
             } else if (command.startsWith("retr")) {
-                //TODO send pages to client by
+                //TODO send pages to client
+
+
+            } else if (command.startsWith("images")){
+                //TODO send images to client
             }
         }
     }
