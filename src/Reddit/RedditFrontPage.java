@@ -165,6 +165,15 @@ public class RedditFrontPage extends JFrame implements ActionListener{
             @Override
             public void actionPerformed(ActionEvent event) 
             {
+            	String s = (String)JOptionPane.showInputDialog(
+	                    addPost,
+	                    "Add Post Comment",
+	                    "Customized Dialog",
+	                    JOptionPane.PLAIN_MESSAGE,
+	                    null,
+	                    null,
+	                    "Empty");
+            	if (s == null || s == "") s = "Empty";
             	File directory = new File("./Images");
                 if (! directory.exists()){
                     directory.mkdir();
@@ -181,7 +190,7 @@ public class RedditFrontPage extends JFrame implements ActionListener{
             	} catch (IOException e) {
             		System.out.println("Error in posting your Image.");
             	}
-            	page.addPost("Empty", dest.toString());
+            	page.addPost(s, dest.toString());
             	updateServer();
             	showPage(page);
             }
