@@ -1,8 +1,10 @@
 package Reddit;
 
 import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class ServerThread implements Runnable{
 
@@ -94,9 +96,17 @@ public class ServerThread implements Runnable{
         BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         user = threadCount++;
         System.out.println("Client" + user + " has connected!");
+
         // read input from user
         while (true) {
-            //commands run
+
+            String command = "something"; //TODO get from client
+            if (command.startsWith("update")) {
+                //TODO get pages from client and save them into the data.ser file.
+
+            } else if (command.startsWith("retr")) {
+                //TODO send pages to client by
+            }
         }
     }
 }
