@@ -13,7 +13,7 @@ public class ServerThread implements Runnable{
     private Socket connection;
 //    private PageList pageList;
     private ArrayList<Page> pages;
-    private ArrayList<Image> images;
+ //   private ArrayList<Image> images;
 
     public ServerThread(Socket socket) throws Exception {
         this.connection = socket;
@@ -145,15 +145,15 @@ public class ServerThread implements Runnable{
 
                 ServerSocket welcomeData = new ServerSocket(12004);
                 Socket dataSocket  = welcomeData.accept();
-                welcomeData.close();
-                ArrayList<Image> newImages = new ArrayList<Image>();
+               welcomeData.close();
+    //            ArrayList<Image> newImages = new ArrayList<Image>();
                 ObjectInputStream save = null;
 
                 try {
 
                     save = new ObjectInputStream(new BufferedInputStream(dataSocket.getInputStream()));
                     for (; ; ) {
-                        newImages.add((Image) save.readObject());
+   //                     newImages.add((Image) save.readObject());
                     }
                 } catch (Exception e) {
                     dataSocket.close();
@@ -162,7 +162,7 @@ public class ServerThread implements Runnable{
                     }
                 }
 
-                this.images = newImages;
+   //             this.images = newImages;
 
                 //save images into current image list to sync accross server thread.
                 saveImageList();
@@ -174,9 +174,9 @@ public class ServerThread implements Runnable{
         try {
             FileOutputStream fileOut = new FileOutputStream("./images", true);
             ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(fileOut));
-            for (int i = 0; i < images.size(); i++) {
-                out.writeObject(images.get(i));
-            }
+  //          for (int i = 0; i < images.size(); i++) {
+  //              out.writeObject(images.get(i));
+  //          }
             out.close();
             fileOut.close();
         } catch (IOException i) {

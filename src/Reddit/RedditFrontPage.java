@@ -231,8 +231,11 @@ public class RedditFrontPage extends JFrame implements ActionListener {
             GridBagLayout postLayout = new GridBagLayout();
             postPanel.setLayout(postLayout);
             loc.gridy = 0;
+            loc.ipady = 30;
             JLabel label = new JLabel(post.getPostText());
-            //label.setFont(new Font(label.getName(), Font.PLAIN, 20));
+            label.setVerticalAlignment(JLabel.TOP);
+            label.setFont(new Font(label.getName(), Font.BOLD, 15));
+            
             postPanel.add(label, loc);
             if (count == 3) {
                 loc.gridy = 1;
