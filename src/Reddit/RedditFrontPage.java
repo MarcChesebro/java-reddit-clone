@@ -404,6 +404,7 @@ public class RedditFrontPage extends JFrame implements ActionListener {
                     null,
                     null,
                     "Default Page Name");
+            if (s == null) return;
 //            this.pages = getPageListFromServer();
             for (int i = 0; i < pages.size(); i++) {
                 System.out.println(pages.get(i).getTitle() + " " + s);
