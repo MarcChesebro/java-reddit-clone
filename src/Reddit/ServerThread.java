@@ -13,6 +13,7 @@ public class ServerThread implements Runnable{
     private Socket connection;
 //    private PageList pageList;
     private ArrayList<Page> pages;
+    private ArrayList<Image> images;
 
     public ServerThread(Socket socket) throws Exception {
         this.connection = socket;
@@ -157,7 +158,47 @@ public class ServerThread implements Runnable{
 
             } else if (command.startsWith("images")){
                 //TODO send images to client
+                outToClient.writeBytes("12004\n");
+
+                ServerSocket welcomeData = new ServerSocket(12004);
+                Socket dataSocket  = welcomeData.accept();
+                welcomeData.close();
+                ArrayList<Image> newImages = new ArrayList<Image>();
+                ObjectInputStream save = null;
+
+                try {
+
+                    save = new ObjectInputStream(new BufferedInputStream(dataSocket.getInputStream()));
+                    for (; ; ) {
+                        newImages.add((Image) save.readObject());
+                    }
+                } catch (Exception e) {
+                    dataSocket.close();
+                    if(save != null) {
+                        save.close();
+                    }
+                }
+
+                this.images = newImages;
+
+                //save images into current image list to sync accross server thread.
+                saveImageList();
             }
         }
+    }  
+    
+    public void saveImageList() {
+        try {
+            FileOutputStream fileOut = new FileOutputStream("./images", true);
+            ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(fileOut));
+            for (int i = 0; i < images.size(); i++) {
+                out.writeObject(images.get(i));
+            }
+            out.close();
+            fileOut.close();
+        } catch (IOException i) {
+            System.out.println("error in writing users");
+        }
     }
+    
 }
