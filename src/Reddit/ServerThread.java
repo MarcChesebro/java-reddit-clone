@@ -128,6 +128,7 @@ public class ServerThread implements Runnable{
                 } catch (Exception e) {
                     //System.out.println("error in loadPageList");
                     dataSocket.close();
+                    welcomeData.close();
                     if(save != null) {
                         save.close();
                     }
@@ -150,8 +151,8 @@ public class ServerThread implements Runnable{
                 for(int i = 0; i < this.pages.size(); i++) {
                     objectOut.writeObject(this.pages.get(i));
                 }
-                objectOut.close();
                 dataSocket.close();
+                objectOut.close();
 
             } else if (command.startsWith("images")){
                 //TODO send images to client

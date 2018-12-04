@@ -358,7 +358,6 @@ public class RedditFrontPage extends JFrame implements ActionListener {
             //load first to sync across server threads
             String portString = inFromServer.readLine();
             int port = Integer.parseInt(portString);
-
             dataSocket = new Socket(serverSocket.getInetAddress(), port);
 
             objectOut = new ObjectOutputStream(dataSocket.getOutputStream());
@@ -415,7 +414,6 @@ public class RedditFrontPage extends JFrame implements ActionListener {
             this.pages = getPageListFromServer();
             if (refreshObj == null) {
                 showFrontPage();
-                showFrontPage();
             } else {
                 Page pageToRefresh = (Page) refreshObj;
                 for (int i = 0; i < pages.size(); i++) {
@@ -431,11 +429,12 @@ public class RedditFrontPage extends JFrame implements ActionListener {
         ArrayList<Page> newPages = new ArrayList<Page>();
         ObjectInputStream save = null;
         Socket dataSocket = null;
+        ServerSocket welcomeData = null;
         try {
             int dataPort = 12002;
             outToServer.writeBytes("retr " + dataPort + "\n");
 
-            ServerSocket welcomeData = new ServerSocket(dataPort);
+            welcomeData = new ServerSocket(dataPort);
             dataSocket = welcomeData.accept();
 
             save = new ObjectInputStream(new BufferedInputStream(dataSocket.getInputStream()));
@@ -448,9 +447,14 @@ public class RedditFrontPage extends JFrame implements ActionListener {
                 if (dataSocket != null){
                     dataSocket.close();
                 }
+                if(welcomeData != null){
+                    welcomeData.close();
+                }
+                if(save != null) {
+                    save.close();
+                }
             }catch (Exception f){}
         }
-
 
         return newPages;
     }
