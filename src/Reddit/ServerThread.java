@@ -18,11 +18,6 @@ public class ServerThread implements Runnable{
     public ServerThread(Socket socket) throws Exception {
         this.connection = socket;
         this.pages = new ArrayList<Page>();
-        Page p = new Page("NewPage");
-        p.addPost("hello world 1112341234!", "");
-        p.getPosts().get(0).addComment("test", "test111");
-        this.pages.add(p);
-        saveCurrentPageList();
     }
 
 //    public void addPage(String Title){
