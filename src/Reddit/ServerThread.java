@@ -112,10 +112,11 @@ public class ServerThread implements Runnable{
 
             if (command.startsWith("update")) {
                 //TODO get pages from client and save them into the data.ser file also update self.pages
+                ServerSocket welcomeData = new ServerSocket(12004);
+
                 outToClient.writeBytes("12004\n");
 
-                ServerSocket welcomeData = new ServerSocket(12004);
-                Socket dataSocket  = welcomeData.accept();
+                Socket dataSocket = welcomeData.accept();
                 welcomeData.close();
                 ArrayList<Page> newPages = new ArrayList<Page>();
                 ObjectInputStream save = null;
