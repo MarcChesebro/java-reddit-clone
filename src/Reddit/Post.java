@@ -10,8 +10,8 @@ public class Post implements Serializable {
     private String imagePath;
     private ArrayList<Comment> comments;
 
-    public Post(String postText, String image) {
-        this.postText = postText;
+    public Post( String postText, String image) {
+    	this.postText = postText;
         this.imagePath = image;
         this.comments = new ArrayList<Comment>();
     }

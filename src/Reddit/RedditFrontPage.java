@@ -158,6 +158,7 @@ public class RedditFrontPage extends JFrame implements ActionListener {
         loc.fill = GridBagConstraints.HORIZONTAL;
         loc.anchor = GridBagConstraints.NORTH;
         loc.weightx = 0;
+        loc.weighty = 1;
         loc.gridy = 0;
         loc.gridx = 0;
         final JButton goToFrontPage = new JButton("Back to Front Page");
@@ -206,6 +207,7 @@ public class RedditFrontPage extends JFrame implements ActionListener {
                 } catch (IOException e) {
                     System.out.println("Error in posting your Image.");
                 }
+                s = handle + " says : " + s;
                 page.addPost(s, dest.toString());
                 updateServer();
                 showPage(page);

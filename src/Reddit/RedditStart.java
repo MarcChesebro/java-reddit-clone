@@ -7,7 +7,7 @@ public class RedditStart {
         RedditFrontPage gui = new RedditFrontPage();
         gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gui.setTitle("GVSU Talk");
-        gui.setSize(1300, 700);
+        gui.setSize(700, 800);
         gui.setVisible(true);
 	}
 }
