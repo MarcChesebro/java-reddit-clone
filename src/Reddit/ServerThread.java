@@ -38,24 +38,10 @@ public class ServerThread implements Runnable{
 
     public void saveCurrentPageList() {
         try {
-            FileOutputStream fileOut = new FileOutputStream("data.ser", true);
+            FileOutputStream fileOut = new FileOutputStream("data.ser");
             ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(fileOut));
             for (int i = 0; i < pages.size(); i++) {
                 out.writeObject(pages.get(i));
-            }
-            out.close();
-            fileOut.close();
-        } catch (IOException i) {
-            System.out.println("error in writing users");
-        }
-    }
-
-    public void saveNewPageList(ArrayList<Page> newPages) {
-        try {
-            FileOutputStream fileOut = new FileOutputStream("data.ser", true);
-            ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(fileOut));
-            for (int i = 0; i < newPages.size(); i++) {
-                out.writeObject(newPages.get(i));
             }
             out.close();
             fileOut.close();
@@ -70,23 +56,25 @@ public class ServerThread implements Runnable{
         FileInputStream saveFile;
         try {
             saveFile = new FileInputStream("data.ser");
+            ObjectInputStream save = null;
             try {
-                ObjectInputStream save = new ObjectInputStream(new BufferedInputStream(saveFile));
+                save = new ObjectInputStream(new BufferedInputStream(saveFile));
                 for (; ; ) {
                     newPages.add((Page) save.readObject());
                     count++;
                 }
             } catch (Exception e) {
-
+                System.out.println(e);
             } finally {
+                save.close();
                 saveFile.close();
             }
-            this.pages = newPages;
         } catch (EOFException e) {
             System.out.println("exception in write");
         } catch (Exception exc) {
             //System.out.println("exception in write");
         }
+        this.pages = newPages;
     }
 
     // this runs on start after the thread has been setup
