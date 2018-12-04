@@ -437,6 +437,7 @@ public class RedditFrontPage extends JFrame implements ActionListener {
             welcomeData = new ServerSocket(dataPort);
             dataSocket = welcomeData.accept();
 
+            welcomeData.close();
             save = new ObjectInputStream(new BufferedInputStream(dataSocket.getInputStream()));
             for (; ; ) {
                 newPages.add((Page) save.readObject());
@@ -446,9 +447,6 @@ public class RedditFrontPage extends JFrame implements ActionListener {
             try{
                 if (dataSocket != null){
                     dataSocket.close();
-                }
-                if(welcomeData != null){
-                    welcomeData.close();
                 }
                 if(save != null) {
                     save.close();

@@ -116,6 +116,7 @@ public class ServerThread implements Runnable{
 
                 ServerSocket welcomeData = new ServerSocket(12004);
                 Socket dataSocket  = welcomeData.accept();
+                welcomeData.close();
                 ArrayList<Page> newPages = new ArrayList<Page>();
                 ObjectInputStream save = null;
 
@@ -128,7 +129,6 @@ public class ServerThread implements Runnable{
                 } catch (Exception e) {
                     //System.out.println("error in loadPageList");
                     dataSocket.close();
-                    welcomeData.close();
                     if(save != null) {
                         save.close();
                     }
